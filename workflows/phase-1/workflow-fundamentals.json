@@ -1,0 +1,155 @@
+{
+  "name": "WanderWise - Phase 1 - Workflow Fundamentals",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        112
+      ],
+      "id": "31ee45e8-0b0f-4077-93e2-c31c90de539e",
+      "name": "Start - Test Customer"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "664eb38c-43c5-4c15-a5d4-6cd8b4a152ff",
+              "name": "customer_name",
+              "value": "John Doe",
+              "type": "string"
+            },
+            {
+              "id": "c016baa5-9f3b-41df-b936-88ecfa343cbc",
+              "name": "phone",
+              "value": "+353871234567",
+              "type": "string"
+            },
+            {
+              "id": "6cf42ab4-0a9b-4a96-9a9c-bf7b9c25fb13",
+              "name": "product_interest",
+              "value": "Historical Walking Tour",
+              "type": "string"
+            },
+            {
+              "id": "da35fd15-2e05-43f6-bc5b-215a3cb88769",
+              "name": "message",
+              "value": "I would like to book a historical walking tour",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        112
+      ],
+      "id": "6cb0075e-3e93-4bea-8412-8defa79553c5",
+      "name": "Create Sample Customer Data"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const customerName = String($json.customer_name ?? \"\").trim();\n\nconst phone = String($json.phone ?? \"\").trim();\n\nconst productInterest = String(\n  $json.product_interest ?? \"\"\n).trim();\n\nconst message = String($json.message ?? \"\").trim();\n\nreturn {\n  json: {\n    ...$json,\n    customer_name: customerName,\n    phone: phone,\n    product_interest: productInterest,\n    message: message,\n    phone_provided: phone.length > 0,\n    customer_name_uppercase: customerName.toUpperCase(),\n    processed_at: new Date().toISOString()\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        112
+      ],
+      "id": "afee63dc-564e-4c0a-beb5-e88165b47da8",
+      "name": "Transform Customer Data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f40db56f-420d-49ba-ac7c-b17022a34ca4",
+              "leftValue": "={{ $json.phone_provided }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        192,
+        112
+      ],
+      "id": "9a7daffb-6609-4e16-88fe-c649ce616d85",
+      "name": "Check Customer Phone Number"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start - Test Customer": {
+      "main": [
+        [
+          {
+            "node": "Create Sample Customer Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Sample Customer Data": {
+      "main": [
+        [
+          {
+            "node": "Transform Customer Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform Customer Data": {
+      "main": [
+        [
+          {
+            "node": "Check Customer Phone Number",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ae4c8585-9dbc-4408-8afd-63a82f27573f",
+  "meta": {
+    "instanceId": "7884afa23fce8a865d1c965f3bf5f9050c655cfc1db109520654c33f55778862"
+  },
+  "nodeGroups": [],
+  "id": "UDd4YFtQusMipVf0",
+  "tags": []
+}
